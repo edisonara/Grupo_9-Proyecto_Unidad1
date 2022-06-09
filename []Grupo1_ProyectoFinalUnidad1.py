@@ -1,17 +1,12 @@
-'''
-Analgésicos. ...
-Antiácidos y antiulcerosos. ...
-Antialérgicos. ...
-Antidiarreicos y laxantes. ...
-Antiinfecciosos. ...
-Antiinflamatorios. ...
-Antipiréticos. ...
-Antitusivos y mucolíticos.
-'''
+import re
+import holidays
+from datetime import date, datetime
+import requests
 ####_____________________________________________________________________________________________________
 ####_____________________________________________________________________________________________________
 
 class Medicamentos():
+
     '''clase medicamento para poder hacer lo que 
     medicamentos
     -- init
@@ -21,14 +16,17 @@ class Medicamentos():
         self.nombreMedic= nombre
         self.codigoMedic= codigo
         self.precioMedic= float( precio)
-    def __repr__(self):
+    
+    def __repr__(self):# imprimir objeto como cadena 
 	    return f'nombre {self.nombreMedic}:: codigo {self._codigoMedic}:: precio {self.precioMedic} '
 ####_____________________________________________________________________________________________________
 ####_____________________________________________________________________________________________________
 class Lugar(Medicamentos):
     '''
+    nomenclatura de los medicamentos en 
+    http://pre.esteve.org/wp-content/uploads/2018/01/137014.pdf
 a c o                Antinflamatorios del grupo del ibufenaco [38]
-a d ol, -adol-       Analgésicos [38]
+a d o                Analgésicos [38]
 a n tel              Antihelmínticos que no forman parte de un grupo definido [15]
 a s a                Enzimas [18]
 a s t                Antiasmáticos y antialérgicos de acción preferentemente no antihistamínica [34]
@@ -82,8 +80,17 @@ s u lfa-              Antibióticos sulfamídicos [53]
 t e rol              Broncodilatadores, derivados de la fenetilamina [29]
 t i dina             Antagonistas de los receptores H2 del grupo de la cimetidina [22]
 v e rina             Espasmolíticos de acción similar a la de la papaverina [42]
-v i n-, -vin-         Alcaloides derivados de la Vinca [24]'''
+v i n-, -vin-         Alcaloides derivados de la Vinca [24]
+cuando nos referimos en ordeanr no es ordenar los productos ingresados 
+si no imprimir el lugar especifico de cada medicamento
+
+'''
     def Pasillo(self, codigo):
+        '''
+        esta parte nos encontramos con el lugar del pasillo 
+        - recibe como parametro el codigo 
+         retorna el numero del pasillo donde se encuentra el medicamento
+         '''
         self.codigo1= codigo[:1]
         
         ###__________ pasillo ___________________________
@@ -91,7 +98,7 @@ v i n-, -vin-         Alcaloides derivados de la Vinca [24]'''
             return 1
         if self.codigo1=='b':
             return 2
-        if self.codigo1== 'c':
+        if self.codigo1=='c':
             return 3
         if self.codigo1=='d':
             return 4
@@ -139,26 +146,104 @@ v i n-, -vin-         Alcaloides derivados de la Vinca [24]'''
             return 5
         if self.codigo2=='l':
             return 6
-        if self.codigo2=='r':
+        if self.codigo2=='o':
             return 7
-        if self.codigo2=='s':
+        if self.codigo2=='r':
             return 8
-        if self.codigo2=='u':
+        if self.codigo2=='s':
             return 9
-        if self.codigo2=='x':
+        if self.codigo2=='u':
             return 10
-        if self.codigo2=='z':
+        if self.codigo2=='x':
             return 11
+        if self.codigo2=='z':
+            return 12
         
+class FeriadosTsachilas(holidays.HolidayBase):
+    provincia=['EC-SD']
 
+    '''def __init__(self, years: Union[int, Iterable[int]] = None, expand: bool = True, observed: bool = True, subdiv: Optional[str] = None, prov: Optional[str] = None, state: Optional[str] = None) -> None:
+        super().__init__(years, expand, observed, subdiv, prov, state)'''
+    def __init__(self ,**lista):
+        '''declaramos las funciones necesarias para tener nuestrosferiados a la mano'''
+        self.country = 'ECU'
+        self.provincia1=lista.pop('prov', 'ON')
+        holidays.HolidayBase.__init__(self, **lista)
+
+    def _populate(self, year):
+        '''
+            La documetacion se puede encontrar en: 
+            https://www.eluniverso.com/noticias/ecuador/ecuador-calendario-de-feriados-nacionales-y-por-provincias-para-el-ano-2022-nota/
+            -Cantonización de Santo Domingo: domingo 3 de julio (pasa al lunes 4)
+            -Provincialización: domingo 6 de noviembre (pasa al lunes 7)
+            '''
+        # Set default subdiv if not provided
+        #if self.subdiv == None:
+        self[date(year, 7, 3)] = "Cantonización de Santo Domingo" # año mes y dia 
+        self[date(year, 11, 6)] = "Provincialización de SAnto Domingo"
+
+    def importaFechas(sel, year , month, date):
+        ''' 
+        se importa los datos de la API conocida como abstractapi
+        el cual se encuentra  en : https://app.abstractapi.com/api/holidays/documentation
+        
+        (ejemplo de fechas. https://www.youtube.com/watch?v=wSLbMwNyeLs)'''
+        response = requests.get(f"https://holidays.abstractapi.com/v1/?api_key=91616907df7b4e8282a475d32edfa88a&country=EC&year={year}&month={month}&day={date}")
+        print(response.status_code)
+        print(response.content)
+
+    '''def descuento(self, precio, year, mes, dia):
+        if date(year,mes, dia) == holidays.date:
+            self.PrecioFinal= precio* 50/100
+            return self.PrecioFinal'''
+
+
+    '''def descueto(self, year, mes, dia):
+        if self[date(year, 2, 3)] ==  self[date(year, mes, dia) ]:
+            return'''
+
+         
 
 
 ####_____________________________________________________________________________________________________
 ####_____________________________________________________________________________________________________
+class NewCountryHolidays(holidays.HolidayBase):
+    def _populate(self, year):
+        self[date(year, 7, 3)] = "Cantonización de Santo Domingo" # año mes y dia "
+        self[date(year, 11, 6)] = "Provincialización de SAnto Domingo"
 
 ####_____________________________________________________________________________________________________
 ####_____________________________________________________________________________________________________
-
+####_____________________________________________________________________________________________________
+class Descuento:
+    def __init__ (self, dia, hora, API=False):
+        self.dia= dia
+        self.hora= hora
+        self.ApiEnLinea= API
+    @property
+    def dia(self):
+        return self._dia
+    def dia(self, numValor):
+        try:
+            if len(numValor)!=10:
+                raise ValueError
+            datetime.strptime(numValor, '%Y-%m-%d')
+        except ValueError:
+            raise ValueError('error ingrese en formato AAAA-MM_DD ;)') from None
+        self._dia=numValor
+    @property
+    def hora(self):
+        return self._hora
+    def hora(self, Dato):
+        if not re.match('^([01][0-9]2[0-3]):([0-5][0-9]|)$', Dato):
+            raise ValueError('eror el formato de hora es: hh:mm')
+        self._hora= Dato
+    
+    
+###______________________________________________________________________________________________________________
+###______________________________________________________________________________________________________
+###______________________________________________________________________________________________________
+###______________________________________________________________________________________________________
 def printLugar(pasillo, seccion):
     print(f'se encunetra en el pasillo {pasillo}, seccion {seccion}')
 
@@ -170,6 +255,8 @@ def imprimirRalla(palabra):
         , '______________________________________')
 ####_____________________________________________________________________________________________________
 if __name__ == '__main__':
+
+
     medicamento=Lugar('', '', 0.00)
     while True:
         print('1. guardar los los datos del medicamento')
@@ -188,8 +275,11 @@ if __name__ == '__main__':
             printLugar(medicamento.Pasillo(medicamento.codigoMedic),medicamento.seccion(medicamento.codigoMedic))
         elif opcionPrincipal==3:
             imprimirRalla(' DATOS ')
+
         elif opcionPrincipal==4:
             imprimirRalla(' PRECIOS ')
+
+
         elif opcionPrincipal== 5:
             print('usted salio ;)')
             break
