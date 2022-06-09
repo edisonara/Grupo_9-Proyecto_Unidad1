@@ -182,15 +182,15 @@ class FeriadosTsachilas(holidays.HolidayBase):
         self[date(year, 7, 3)] = "Cantonización de Santo Domingo" # año mes y dia 
         self[date(year, 11, 6)] = "Provincialización de SAnto Domingo"
 
-    def importaFechas(sel, year , month, date):
-        ''' 
-        se importa los datos de la API conocida como abstractapi
-        el cual se encuentra  en : https://app.abstractapi.com/api/holidays/documentation
-        
-        (ejemplo de fechas. https://www.youtube.com/watch?v=wSLbMwNyeLs)'''
-        response = requests.get(f"https://holidays.abstractapi.com/v1/?api_key=91616907df7b4e8282a475d32edfa88a&country=EC&year={year}&month={month}&day={date}")
-        print(response.status_code)
-        print(response.content)
+def importaFechas( year , month, date):
+    ''' 
+    se importa los datos de la API conocida como abstractapi
+    el cual se encuentra  en : https://app.abstractapi.com/api/holidays/documentation
+    
+    (ejemplo de fechas. https://www.youtube.com/watch?v=wSLbMwNyeLs)'''
+    response = requests.get(f"https://holidays.abstractapi.com/v1/?api_key=91616907df7b4e8282a475d32edfa88a&country=EC&year={year}&month={month}&day={date}")
+    print(response.status_code)
+    print(response.content)
 
     '''def descuento(self, precio, year, mes, dia):
         if date(year,mes, dia) == holidays.date:
@@ -238,8 +238,30 @@ class Descuento:
         if not re.match('^([01][0-9]2[0-3]):([0-5][0-9]|)$', Dato):
             raise ValueError('eror el formato de hora es: hh:mm')
         self._hora= Dato
-    
-    
+    def __EsFiesta(self, date, enLinea ):
+        ano, maso, menos= date.split('-')
+        if enLinea:
+            response = requests.get(f"https://holidays.abstractapi.com/v1/?api_key=91616907df7b4e8282a475d32edfa88a&country=EC&year={ano}&month={maso}&day={menos}")
+            print(response.status_code)
+            print(response.content)
+            if response.content== b'[]':
+                return False
+            return True
+        else:
+            FiestasApi=FeriadosTsachilas(prov='EC-SD')
+            return date in FiestasApi
+    def ImprimirSiNo(self):
+        '''este metodo llama a los metodos anteriores 
+        para saber si si es ferido o no  '''
+        if self.__EsFiesta(self.dia,self.ApiEnLinea):
+            return True
+
+
+                 
+
+
+
+
 ###______________________________________________________________________________________________________________
 ###______________________________________________________________________________________________________
 ###______________________________________________________________________________________________________
@@ -254,10 +276,13 @@ def imprimirRalla(palabra):
     print(f'______________________________________\n      {palabra}\n'
         , '______________________________________')
 ####_____________________________________________________________________________________________________
+####_____________________________________________________________________________________________________
+####_____________________________________________________________________________________________________
+####_____________________________________________________________________________________________________
 if __name__ == '__main__':
-
-
     medicamento=Lugar('', '', 0.00)
+    enLinea=False
+    cuantoPagas= Descuento('', '', enLinea)
     while True:
         print('1. guardar los los datos del medicamento')
         print('2. ver la ubicacion del medicamento.')
@@ -278,7 +303,12 @@ if __name__ == '__main__':
 
         elif opcionPrincipal==4:
             imprimirRalla(' PRECIOS ')
-
+            fecha=input('ingrese fecha de la compra del medicamento (AAAA-MM-DD): ')
+            hora = input('ingrese hora de la compra del medicamento (HH:mm):')
+            if cuantoPagas.ImprimirSiNo():
+                print(f'el cliente tiene un descuento del {medicamento.precioMedic*5/100}, por lo que pagaria {medicamento.precioMedic-(medicamento.precioMedic*5/100)} dolares. ')
+            else:
+                print(f'el cliente no tiene descuento, pagaria, {medicamento.precioMedic} dolares. ')
 
         elif opcionPrincipal== 5:
             print('usted salio ;)')
