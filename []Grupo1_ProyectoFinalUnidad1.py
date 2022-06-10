@@ -209,19 +209,6 @@ class Descuento:
         except ValueError:
             raise ValueError('error ingrese en formato AAAA-MM_DD ;)') from None
         self._dia=numValor
-    '''@property
-    def hora(self):
-        return self._hora
-
-    @hora.setter
-    def hora(self, Dato):
-        if not re.match('^([01][0-9]2[0-3]):([0-5][0-9]|)$', Dato):
-            raise ValueError('eror el formato de hora es: hh:mm')
-        self._hora= Dato
-
-    def __encunetraDia(self, fecha ):
-        dia=datetime.strptime(fecha, '%Y-%m-%d').weekday()
-        return '''
 
     def __EsFiesta(self, date, enLinea ):
         ano, maso, menos = date.split('-')
@@ -246,12 +233,6 @@ class Descuento:
         if self.__EsFiesta(self.dia , self.ApiEnLinea):
             return True
         return False
-
-
-                 
-
-
-
 
 ###______________________________________________________________________________________________________________
 ###______________________________________________________________________________________________________
@@ -279,22 +260,30 @@ if __name__ == '__main__':
     enLinea=False
     
     while True:
-        print('1. guardar los los datos del medicamento')
-        print('2. ver la ubicacion del medicamento.')
-        print('3. precio del medicamento(segun).')
-        print('4. salir...')
+        print('______________________________________________')
+        print('| 1. Guardar los los datos del medicamento    |')
+        print('| 2. Ver la ubicacion del medicamento.        |')
+        print('| 3. Imprimir datos del medicamento.          |')
+        print('| 4. Precio del medicamento(segun).           |')
+        print('| 5. Salir...                                 |')
+        print('______________________________________________')
         ##____________________________________________________________
         opcionPrincipal= int(input('ingrese opcion(#): '))
         if opcionPrincipal==1:
            imprimirRalla('INGRESO DE DATOS ')
            medicamento.nombreMedic=input('ingrese nombre del medicamento: ')
-           medicamento.codigoMedic= input('ingrese el condgo del medicamento: ')
+           medicamento.codigoMedic= input('ingrese el condigo del medicamento: ')
            medicamento.precioMedic= float(input('ingrese el precio del medicamento (#.##): '))
         elif opcionPrincipal==2:
             imprimirRalla('UBICACION DEL MEDICAMENTO ')
             printLugar(medicamento.Pasillo(medicamento.codigoMedic),medicamento.seccion(medicamento.codigoMedic))
 
         elif opcionPrincipal==3:
+            imprimirRalla(' DATOS DEL MEDICAMENTO INGRESADOS ')
+            print(f'medicamento {medicamento.nombreMedic}, \n   con codigo referencia de la tabla propuesta por Navarro # ({medicamento.codigoMedic} )\n    y precio de {medicamento.precioMedic} dolares. ',
+                '\n Sobre el codigo puedes ver en: http://pre.esteve.org/wp-content/uploads/2018/01/137014.pdf')
+
+        elif opcionPrincipal==4:
             imprimirRalla(' PRECIOS ')
             fecha=input('ingrese fecha de la compra del medicamento (AAAA-MM-DD): ')
             #hora = input('ingrese hora de la compra del medicamento (HH:mm):')
@@ -304,7 +293,7 @@ if __name__ == '__main__':
             else:
                 print(f'el cliente no tiene descuento, pagaria, {medicamento.precioMedic} dolares. ')
 
-        elif opcionPrincipal== 4:
+        elif opcionPrincipal== 5:
             print('usted salio ;)')
             break
         else:
