@@ -308,7 +308,7 @@ class Descuento:
         ano, maso, menos = date.split('-')
         if enLinea: # condicion si es enLinea true
             ''' 
-                se importa los datos de la API conocida como abstractapi
+                se importa los datos de la API conocida como abstract api
                 el cual se encuentra  en : https://app.abstractapi.com/api/holidays/documentation
                 
                 (ejemplo de fechas. https://www.youtube.com/watch?v=wSLbMwNyeLs)'''
@@ -355,6 +355,27 @@ def imprimirRalla(palabra):
     - recibe como parametros una cadena de caracteres. '''
     print(f'______________________________________\n      {palabra}\n'
         , '______________________________________')
+
+def GuardarMedicamento():
+    medicamento.nombreMedic=input('ingrese nombre del medicamento: ') # ingresamos lo valores  - nombre del medicamento.
+    medicamento.codigoMedic= input('ingrese el condigo del medicamento(XX##): ')# codigo del medicamento enformato XX##.
+    medicamento.precioMedic= float(input('ingrese el precio del medicamento (#.##): '))# ingresa el precio del medicamento.
+
+def UbicacionMedicamento():
+    printLugar(medicamento.Pasillo(medicamento.codigoMedic),medicamento.seccion(medicamento.codigoMedic)) # imprime el lugar del medicamento en funcion del codigo del medicamento
+
+def PrintMedicamento():
+    print(f'medicamento {medicamento.nombreMedic}, \n   con codigo referencia de la tabla propuesta por Navarro # ({medicamento.codigoMedic} )\n    y precio de {medicamento.precioMedic} dolares. ',
+                '\n Sobre el codigo puedes ver en: http://pre.esteve.org/wp-content/uploads/2018/01/137014.pdf')  # imprimimos los datos del medicamento
+
+def PrecioDescuento():
+    fecha=input('ingrese fecha de la compra del medicamento (AAAA-MM-DD): ')
+    cuantoPagas= Descuento(fecha, enLinea)  # isntanciamos aqui la clase Decuento, con el dato de la fecha(str) y el valor por defecto que tenemos False
+    if cuantoPagas.ImprimirSiNo(): # utilizamos el ultimo metodo el mas importante el que conecta todos los metodos de la clase Descuento si es True  
+        print(f'el cliente tiene un descuento del {medicamento.precioMedic*5/100}, por lo que pagaria {medicamento.precioMedic-(medicamento.precioMedic*5/100)} dolares. ')
+    else: # si no lo es pues sige tu camino codigo o ejecucion ;)
+        print(f'el cliente no tiene descuento, pagaria, {medicamento.precioMedic} dolares. ')
+
 ####_____________________________________________________________________________________________________
 ####_____________________________________________________________________________________________________
 ####_____________________________________________________________________________________________________
@@ -377,27 +398,17 @@ if __name__ == '__main__':
         opcionPrincipal= int(input('ingrese opcion(#): '))
         if opcionPrincipal==1:
            imprimirRalla('INGRESO DE DATOS ')
-           medicamento.nombreMedic=input('ingrese nombre del medicamento: ') # ingresamos lo valores  - nombre del medicamento.
-           medicamento.codigoMedic= input('ingrese el condigo del medicamento(XX##): ')# codigo del medicamento enformato XX##.
-           medicamento.precioMedic= float(input('ingrese el precio del medicamento (#.##): '))# ingresa el precio del medicamento. 
+           GuardarMedicamento()
+            
         elif opcionPrincipal==2:
             imprimirRalla('UBICACION DEL MEDICAMENTO ')
-            printLugar(medicamento.Pasillo(medicamento.codigoMedic),medicamento.seccion(medicamento.codigoMedic)) # imprime el lugar del medicamento en funcion del codigo del medicamento
-
+            UbicacionMedicamento()
         elif opcionPrincipal==3:
             imprimirRalla(' DATOS DEL MEDICAMENTO INGRESADOS ')
-            print(f'medicamento {medicamento.nombreMedic}, \n   con codigo referencia de la tabla propuesta por Navarro # ({medicamento.codigoMedic} )\n    y precio de {medicamento.precioMedic} dolares. ',
-                '\n Sobre el codigo puedes ver en: http://pre.esteve.org/wp-content/uploads/2018/01/137014.pdf')  # imprimimos los datos del medicamento
-
+            PrintMedicamento()
         elif opcionPrincipal==4:
             imprimirRalla(' PRECIOS ')
-            fecha=input('ingrese fecha de la compra del medicamento (AAAA-MM-DD): ')
-            cuantoPagas= Descuento(fecha, enLinea)  # isntanciamos aqui la clase Decuento, con el dato de la fecha(str) y el valor por defecto que tenemos False
-            if cuantoPagas.ImprimirSiNo(): # utilizamos el ultimo metodo el mas importante el que conecta todos los metodos de la clase Descuento si es True  
-                print(f'el cliente tiene un descuento del {medicamento.precioMedic*5/100}, por lo que pagaria {medicamento.precioMedic-(medicamento.precioMedic*5/100)} dolares. ')
-            else: # si no lo es pues sige tu camino codigo o ejecucion ;)
-                print(f'el cliente no tiene descuento, pagaria, {medicamento.precioMedic} dolares. ')
-
+            PrecioDescuento()
         elif opcionPrincipal== 5:
             print('usted salio ;)')
             break # para saltarme del menu o el while
