@@ -10,16 +10,26 @@ class Medicamentos():
 
     '''clase medicamento para poder hacer lo que 
     medicamentos
-    -- init
-    --- repr (imprimir)
-    -- codigo : A'''
+
+    Parámetros
+    -----
+
+    atributos
+    --------
+     - nombre - del medicamento como string 
+     - codigo - del medicameto, en base de la tabla propuesta por Navarro como string, en 
+                http://pre.esteve.org/wp-content/uploads/2018/01/137014.pdf
+     - precio - del medicamento como flotante
+
+     metodos
+     --------
+     - constructor- en cual pasa como parametros todos los atributos del a clase Medicamentos
+    '''
     def __init__(self, nombre, codigo, precio):
         self.nombreMedic= nombre
         self.codigoMedic= codigo
         self.precioMedic= float( precio)
     
-    def __repr__(self):# imprimir objeto como cadena 
-	    return f'nombre {self.nombreMedic}:: codigo {self._codigoMedic}:: precio {self.precioMedic} '
 ####_____________________________________________________________________________________________________
 ####_____________________________________________________________________________________________________
 class Lugar(Medicamentos):
